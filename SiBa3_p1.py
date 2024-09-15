@@ -2,47 +2,41 @@
 ##### INTERFACE
 from abc import ABC, abstractproperty, abstractclassmethod
 
-class Transacao(ABC):	##    classe abstrata
+class Transacao(ABC):	
 	@property
 	@abstractproperty
 	def valor(self):
 		pass
 
-	## métodos públicos da classe abstrata
 	@abstractclassmethod
-	def registrar(self, conta):	## 
+	def registrar(self, conta):	
 		pass
 
 
 ##### -------------------------------------------------------------------------
-class Deposito(Transacao):		## extende a classe abstrata Transacao
-	## construtor
+class Deposito(Transacao):	
 	def __init__(self, valor):
-		## atributos privados
-		self._valor = valor		## extende a classe abstrata Transacao
+		self._valor = valor	
 
 	@property
 	def valor(self):
 		return self._valor
 
-	## métodos abstratos
 	def registrar(self, conta):
 		if conta.depositar(self.valor):
 			conta.historico.adicionar_transacao(self)
 
 
 ##### -------------------------------------------------------------------------
-class Saque(Transacao):		## extende a transasão
-	## construtor
+class Saque(Transacao):		
+
 	def __init__(self, valor):
-		## atributos privados
-		self._valor = valor		##    ponto flutuante
+		self._valor = valor	
 
 	@property
 	def valor(self):
 		return self._valor
 
-	## métodos públicos da classe abstrata
 	def registrar(self, conta):
 		if conta.sacar(self.valor):
 			conta.historico.adicionar_transacao(self)
@@ -55,30 +49,24 @@ class Saque(Transacao):		## extende a transasão
 ##### *************************************************************************
 ##### CLIENTES
 class Cliente():
-	## construtor
 	def __init__(self, endereco):
-		## atributos públicos
-		self.endereco = endereco	##   endereco = logradouro, no - bairro - cidade/uf
-		self.contas = []				## lista das contas, o cliente pode ter mais de uma conta
+		self.endereco = endereco	
+		self.contas = []		
 
-	## métodos públicos
 	def adicionar_conta(self, conta):
 		self.contas.append(conta)
 
-	def realizar_transacao(self, conta, transacao):		## DEPOSITO | SAQUE
+	def realizar_transacao(self, conta, transacao):		
 		transacao.registrar(conta)
 
 
 ##### -------------------------------------------------------------------------
-class PessoaFisica(Cliente):	## classe filha de Cliente
-	## construtor
+class PessoaFisica(Cliente):	
 	def __init__(self, cpf, nome, data_nascimento, endereco):
-		## atributos herdados da classe mãe
 		super().__init__(endereco)
-		## atributos públicos
-		self.cpf = cpf									##   cpf = 12345678911
-		self.nome = nome								##   nome = 
-		self.data_nascimento = data_nascimento	##   data_nascimento = dd/mm/aaaa
+		self.cpf = cpf				
+		self.nome = nome			
+		self.data_nascimento = data_nascimento	
 
 ##### /CLIENTES
 ##### _________________________________________________________________________
@@ -89,21 +77,17 @@ class PessoaFisica(Cliente):	## classe filha de Cliente
 ##### EXTRATO
 class Historico():
 	def __init__(self):
-		## atributos públicos
-		self._extrato_historico = [] # extrato = ''
+		self._extrato_historico = [] 
 
 	@property
 	def exibir(self):
 		return self._extrato_historico
 
-	## métodos públicos
 	def adicionar_transacao(self, tipo):
 		self._extrato_historico.append({
 			'tipo': _extrato_historico.__name__.upper(),
 			'valor': tipo.valor
 		})
-		# extrato.append(('DEPOSITO', valor_deposito))
-		# saldo += valor_deposito
 
 ##### /EXTRATO
 ##### _________________________________________________________________________
@@ -114,17 +98,15 @@ class Historico():
 ##### CONTAS
 ## AGENCIA = '0001'
 class Conta():
-	## método construtor
 	def __init__(self, numero, cliente):
-		## atributos privados
-		self._saldo = 0.00				##   ponto flutuante
-		self._numero = numero			##   conta_numero  ->  sequencial 1, 2, 3
-		self._agencia = '0001'			##   agencia  ->  fixo = `0001`
-		self._cliente = cliente 		##   objeto Cliente
-		self._historico = Historico	##   classe Historico
+		self._saldo = 0.00	
+		self._numero = numero		
+		self._agencia = '0001'	
+		self._cliente = cliente 	
+		self._historico = Historico	
 	
 	@property
-	def saldo(self):	## deve retorna um float
+	def saldo(self):	
 		return self._saldo
 	
 	@property
@@ -152,17 +134,15 @@ class Conta():
 		return self._historico
 
 	@classmethod
-	def nova_conta(classe, cliente, numero):	## classmethod, retorna o objeto Conta
+	def nova_conta(classe, cliente, numero):	
 		return classe(numero, cliente)
 
-	## metodos públicos
-	def sacar(self, valor):	## deve retorna um booleano
+	def sacar(self, valor):	
 		saldo = self.saldo
 		if saldo <= 0.00:
 			print(f'   A CONTA NÃO POSSUE SALDO.')
 			return False
 		else:
-			# print(f'   SALDO DISPONÍVEL     = R$ {saldo:9.2f}')
 			if valor <= 0:
 				print(f'   VALOR INVÁLIDO.')
 				return False
@@ -176,7 +156,7 @@ class Conta():
 					return True
 
 
-	def depositar(self, valor):	## deve retorna um booleano
+	def depositar(self, valor):	
 		if valor <= 0:
 			print(f'   VALOR INVÁLIDO.')
 			return False
@@ -196,24 +176,19 @@ class Conta():
 ##### -------------------------------------------------------------------------
 ## SAQUES_VALOR_LIMITE_POR_TRANSACAO = 500.00
 ## SAQUES_QUANTIDADE_POR_DIA = 3
-class ContaCorrente(Conta):	##    classe filha de Conta
-	## método construtor
+class ContaCorrente(Conta):	
 	def __init__(self, numero, cliente, limite=500.00, limite_saques=3):
-		## atributos herdados da classe mãe
 		super().__init__(numero, cliente)
-		## atributos privados
 		self._limite = limite
 		self._limite_saques = limite_saques
 		self._numero_saques = 0
 	
-	## metodos públicos
-	def sacar(self, valor):	## deve retorna um booleano
+	def sacar(self, valor):	
 		saldo = self.saldo
 		if saldo <= 0.00:
 			print(f'   A CONTA NÃO POSSUE SALDO.')
 			return False
 		else:
-			# print(f'   SALDO DISPONÍVEL     = R$ {saldo:9.2f}')
 			if valor <= 0:
 				print(f'   VALOR INVÁLIDO.')
 				return False
@@ -234,35 +209,3 @@ class ContaCorrente(Conta):	##    classe filha de Conta
 ##### _________________________________________________________________________
 
 
-
-##### *************************************************************************
-##### *************************************************************************
-##### *************************************************************************
-
-
-
-
-
-##### *************************************************************************
-##### *************************************************************************
-##### *************************************************************************
-
-"""
-
-c1 = Conta.nova_conta('Saci', 1)
-# c2 = Conta.nova_conta('Saci', 2)
-print(c1)
-
-# c1.extrato
-# c1._saldo = 2000.00
-# c1.sacar(50.0)
-c1.depositar(60000.00)
-c1.sacar(500.0)
-c1.sacar(500.0)
-c1.sacar(600.0)
-c1.sacar(75.0)
-c1.sacar(25.0)
-c1.sacar(50.0)
-c1.depositar(1000.00)
-c1.sacar(750.0)
-"""
